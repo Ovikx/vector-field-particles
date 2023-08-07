@@ -6,4 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+indexmap = { version = "2.0.0", features = ["std"] }
 sdl2 = { version = "0.35.2", features = [] }
