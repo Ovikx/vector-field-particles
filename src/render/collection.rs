@@ -22,4 +22,8 @@ impl ParticleCollection {
     pub fn remove_particle(&mut self, particle_id: u32) {
         self.particles.remove(&particle_id);
     }
+
+    pub fn clear(&mut self) {
+        self.particles.clear();
+    }
 }

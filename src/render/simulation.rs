@@ -35,7 +35,7 @@ impl<'a> Simulation<'a> {
             framerate,
             background_color,
             particle_collection: ParticleCollection::new(),
-            vector_field: |point: (i32, i32)| -> (f32, f32) { (0.0, 1.0) },
+            vector_field: |_point: (i32, i32)| -> (f32, f32) { (0.0, 1.0) },
         }
     }
 
@@ -70,6 +70,17 @@ impl<'a> Simulation<'a> {
                         keycode: Some(Keycode::Escape),
                         ..
                     } => break 'running,
+                    Event::KeyDown {
+                        timestamp: _,
+                        window_id: _,
+                        keycode,
+                        scancode: _,
+                        keymod: _,
+                        repeat: _,
+                    } => match keycode {
+                        Some(Keycode::C) => self.particle_collection.clear(),
+                        _ => {}
+                    },
 
                     // Handle mouse down
                     Event::MouseButtonDown {
@@ -85,7 +96,7 @@ impl<'a> Simulation<'a> {
                             mass: 10,
                             x,
                             y,
-                            size: 10,
+                            size: 1,
                             color: Color::RGB(
                                 rng.gen_range(0..=255),
                                 rng.gen_range(0..=255),
@@ -93,14 +104,18 @@ impl<'a> Simulation<'a> {
                             ),
                             velocity: Vector2 { x: 0f32, y: -1.0 },
                         }),
-                        MouseButton::Right => self.particle_collection.add_particle(Particle {
-                            mass: 5,
-                            x,
-                            y,
-                            size: 10,
-                            color: Color::GREEN,
-                            velocity: Vector2 { x: 0f32, y: -1.0 },
-                        }),
+                        MouseButton::Right => {
+                            for _i in 0..1000 {
+                                self.particle_collection.add_particle(Particle {
+                                    mass: 5,
+                                    x: (x as f32 * rng.gen_range(0.6..1.4)) as i32,
+                                    y: (y as f32 * rng.gen_range(0.8..1.2)) as i32,
+                                    size: 1,
+                                    color: Color::RGB(255, rng.gen_range(0..=255), 0),
+                                    velocity: Vector2 { x: 0f32, y: -1.0 },
+                                })
+                            }
+                        }
                         _ => {}
                     },
                     _ => {}

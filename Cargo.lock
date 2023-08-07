@@ -3,15 +3,6 @@
 version = 3
 
 [[package]]
-name = "audioswirl"
-version = "0.1.0"
-dependencies = [
- "indexmap",
- "rand",
- "sdl2",
-]
-
-[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -125,6 +116,15 @@ dependencies = [
  "cfg-if",
  "libc",
  "version-compare",
+]
+
+[[package]]
+name = "vecfield-particle-sim"
+version = "0.1.0"
+dependencies = [
+ "indexmap",
+ "rand",
+ "sdl2",
 ]
 
 [[package]]
