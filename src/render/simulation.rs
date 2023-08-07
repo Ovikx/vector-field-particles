@@ -50,6 +50,8 @@ impl<'a> Simulation<'a> {
 
         let mut canvas = window.into_canvas().build().unwrap();
 
+        let window_size = (self.width, self.height);
+
         canvas.set_draw_color(self.background_color);
         canvas.clear();
         canvas.present();
@@ -81,10 +83,10 @@ impl<'a> Simulation<'a> {
                             y,
                             size: 10,
                             color: Color::WHITE,
-                            velocity: Vector2 { x: 0f32, y: -10.0 },
+                            velocity: Vector2 { x: 0f32, y: -1.0 },
                         }),
                         MouseButton::Right => self.particle_collection.add_particle(Particle {
-                            mass: 10,
+                            mass: 5,
                             x,
                             y,
                             size: 10,
@@ -105,7 +107,7 @@ impl<'a> Simulation<'a> {
 
             // Drawing logic
             for (key, particle) in self.particle_collection.particles.iter_mut() {
-                particle.update_position(self.vector_field); // Apply the gradient before drawing
+                particle.update_position(self.vector_field, window_size, true); // Apply the gradient before drawing
                 canvas.set_draw_color(particle.color);
                 if particle.x < (self.width as i32)
                     && particle.x > 0
