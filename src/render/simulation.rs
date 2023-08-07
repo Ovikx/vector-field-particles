@@ -1,23 +1,25 @@
 use std::time::Duration;
 
-use sdl2::event::Event;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
+use sdl2::{event::Event, mouse::MouseButton};
 
 use sdl2::keyboard::Keycode;
 
+use crate::particle::particle::VectorField;
 use crate::{Particle, ParticleCollection, Vector2};
 
-pub struct Renderer<'a> {
+pub struct Simulation<'a> {
     title: &'a str,
     width: u32,
     height: u32,
     framerate: u32,
     background_color: Color,
     particle_collection: ParticleCollection,
+    vector_field: VectorField,
 }
 
-impl<'a> Renderer<'a> {
+impl<'a> Simulation<'a> {
     pub fn new(
         title: &'a str,
         width: u32,
@@ -25,13 +27,14 @@ impl<'a> Renderer<'a> {
         framerate: u32,
         background_color: Color,
     ) -> Self {
-        Renderer {
+        Simulation {
             title,
             width,
             height,
             framerate,
             background_color,
             particle_collection: ParticleCollection::new(),
+            vector_field: |point: (i32, i32)| -> (f32, f32) { (0.0, 1.0) },
         }
     }
 
@@ -44,7 +47,6 @@ impl<'a> Renderer<'a> {
             .position_centered()
             .build()
             .unwrap();
-        let window_size = &window.size();
 
         let mut canvas = window.into_canvas().build().unwrap();
 
@@ -52,9 +54,9 @@ impl<'a> Renderer<'a> {
         canvas.clear();
         canvas.present();
         let mut event_pump = sdl_context.event_pump().unwrap();
-        let mut i = 0;
+        let mut frame = 0;
         'running: loop {
-            i = (i + 1) % 255;
+            frame = (frame + 1) % 255;
             for event in event_pump.poll_iter() {
                 match event {
                     Event::Quit { .. }
@@ -68,17 +70,29 @@ impl<'a> Renderer<'a> {
                         timestamp: _,
                         window_id: _,
                         which: _,
-                        mouse_btn: _,
+                        mouse_btn,
                         clicks: _,
                         x,
                         y,
-                    } => self.particle_collection.add_particle(Particle {
-                        x,
-                        y,
-                        size: 10,
-                        color: Color::WHITE,
-                        gradient: Vector2 { x: 0f32, y: 1.0 },
-                    }),
+                    } => match mouse_btn {
+                        MouseButton::Left => self.particle_collection.add_particle(Particle {
+                            mass: 10,
+                            x,
+                            y,
+                            size: 10,
+                            color: Color::WHITE,
+                            velocity: Vector2 { x: 0f32, y: -10.0 },
+                        }),
+                        MouseButton::Right => self.particle_collection.add_particle(Particle {
+                            mass: 10,
+                            x,
+                            y,
+                            size: 10,
+                            color: Color::GREEN,
+                            velocity: Vector2 { x: 0f32, y: -1.0 },
+                        }),
+                        _ => {}
+                    },
                     _ => {}
                 }
             }
@@ -86,19 +100,29 @@ impl<'a> Renderer<'a> {
             canvas.set_draw_color(self.background_color);
             canvas.clear();
 
+            // Removal storage
+            let mut to_remove: Vec<&u32> = vec![];
+
             // Drawing logic
-            for (_, particle) in &mut self.particle_collection.particles {
-                particle.apply_gradient(); // Apply the gradient before drawing
-                println!("{:?}", particle.y);
+            for (key, particle) in self.particle_collection.particles.iter_mut() {
+                particle.update_position(self.vector_field); // Apply the gradient before drawing
                 canvas.set_draw_color(particle.color);
-                canvas
-                    .fill_rect(Rect::new(
-                        particle.x,
-                        particle.y,
-                        particle.size,
-                        particle.size,
-                    ))
-                    .unwrap();
+                if particle.x < (self.width as i32)
+                    && particle.x > 0
+                    && particle.y < (self.height as i32)
+                    && particle.y > 0
+                {
+                    canvas
+                        .fill_rect(Rect::new(
+                            particle.x,
+                            particle.y,
+                            particle.size,
+                            particle.size,
+                        ))
+                        .unwrap();
+                } else {
+                    to_remove.push(key);
+                }
             }
 
             canvas.present();

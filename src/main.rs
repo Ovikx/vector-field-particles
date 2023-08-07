@@ -1,9 +1,9 @@
 extern crate sdl2;
 
-use audioswirl::render::render_loop::Renderer;
+use audioswirl::render::simulation::Simulation;
 use sdl2::pixels::Color;
 
 pub fn main() {
-    let mut renderer = Renderer::new("audioswirl", 800, 600, 60, Color::BLACK);
+    let mut renderer = Simulation::new("audioswirl", 800, 600, 165, Color::BLACK);
     renderer.start();
 }
