@@ -1,10 +1,11 @@
 use std::time::Duration;
 
+use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::{event::Event, mouse::MouseButton};
 
-use sdl2::keyboard::Keycode;
+use rand::prelude::*;
 
 use crate::particle::particle::VectorField;
 use crate::{Particle, ParticleCollection, Vector2};
@@ -57,6 +58,9 @@ impl<'a> Simulation<'a> {
         canvas.present();
         let mut event_pump = sdl_context.event_pump().unwrap();
         let mut frame = 0;
+
+        // rand
+        let mut rng = thread_rng();
         'running: loop {
             frame = (frame + 1) % 255;
             for event in event_pump.poll_iter() {
@@ -82,7 +86,11 @@ impl<'a> Simulation<'a> {
                             x,
                             y,
                             size: 10,
-                            color: Color::WHITE,
+                            color: Color::RGB(
+                                rng.gen_range(0..=255),
+                                rng.gen_range(0..=255),
+                                rng.gen_range(0..=255),
+                            ),
                             velocity: Vector2 { x: 0f32, y: -1.0 },
                         }),
                         MouseButton::Right => self.particle_collection.add_particle(Particle {
@@ -107,7 +115,7 @@ impl<'a> Simulation<'a> {
 
             // Drawing logic
             for (key, particle) in self.particle_collection.particles.iter_mut() {
-                particle.update_position(self.vector_field, window_size, true); // Apply the gradient before drawing
+                particle.update_position(self.vector_field, 2.0, window_size, true); // Apply the gradient before drawing
                 canvas.set_draw_color(particle.color);
                 if particle.x < (self.width as i32)
                     && particle.x > 0

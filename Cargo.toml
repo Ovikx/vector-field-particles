@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 indexmap = { version = "2.0.0", features = ["std"] }
+rand = "0.8.5"
 sdl2 = { version = "0.35.2", features = [] }

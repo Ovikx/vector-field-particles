@@ -24,7 +24,13 @@ impl Particle {
     }
 
     /// Applies the vector field (in N) to the particle based on its position relative to the center of the screen
-    fn apply_field(&mut self, field: VectorField, window_size: (u32, u32), bounded: bool) {
+    fn apply_field(
+        &mut self,
+        field: VectorField,
+        factor: f32,
+        window_size: (u32, u32),
+        bounded: bool,
+    ) {
         let (shifted_x, shifted_y) = (
             self.x - (window_size.0 / 2) as i32,
             self.y - (window_size.1 / 2) as i32,
@@ -42,13 +48,19 @@ impl Particle {
             false => field((shifted_x, shifted_y)),
         };
 
-        self.velocity.x += force.0 / self.mass as f32;
-        self.velocity.y += force.1 / self.mass as f32;
+        self.velocity.x += force.0 / self.mass as f32 * factor;
+        self.velocity.y += force.1 / self.mass as f32 * factor;
     }
 
     /// Abstraction to update the position of the particle given the window information
-    pub fn update_position(&mut self, field: VectorField, window_size: (u32, u32), bounded: bool) {
-        self.apply_field(field, window_size, bounded);
+    pub fn update_position(
+        &mut self,
+        field: VectorField,
+        factor: f32,
+        window_size: (u32, u32),
+        bounded: bool,
+    ) {
+        self.apply_field(field, factor, window_size, bounded);
         self.apply_velocity();
     }
 }
