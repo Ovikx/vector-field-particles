@@ -6,7 +6,7 @@ The idea is pretty simple: the visible screen is a vector field that exerts forc
 
 Vector field $F(x, y) = \frac{(-x, -y)}{\sqrt{x^2 + y^2}}$ acting on 1500 particles, then 4500 after two more particle spawns  
 (Apologies for the low framerate, it came from GIF compression)
-![](gifs/sim1.gif)
+![GIF (if not displaying, go to the `gifs` folder)](https://github.com/Ovikx/vec-field-particles/blob/master/gifs/sim1.gif)
 
 # Usage
 This project is kind of a stepping stone for another project I'm making, so I wouldn't call it user-friendly. If you do want to try it out, clone the repo and follow the [installation instructions for SDL2](https://github.com/Rust-SDL2/rust-sdl2#requirements). 
