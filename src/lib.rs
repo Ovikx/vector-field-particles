@@ -1,5 +1,6 @@
 pub mod particle;
 pub mod render;
+pub mod utils;
 pub mod vector;
 
 pub use particle::particle::Particle;

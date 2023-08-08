@@ -8,6 +8,7 @@ use sdl2::{event::Event, mouse::MouseButton};
 use rand::prelude::*;
 
 use crate::particle::particle::VectorField;
+use crate::utils::magnitude;
 use crate::{Particle, ParticleCollection, Vector2};
 
 pub struct Simulation<'a> {
@@ -35,7 +36,10 @@ impl<'a> Simulation<'a> {
             framerate,
             background_color,
             particle_collection: ParticleCollection::new(),
-            vector_field: |_point: (i32, i32)| -> (f32, f32) { (0.0, 1.0) },
+            vector_field: |point: (i32, i32)| -> (f32, f32) {
+                let magnitude = magnitude((point.0 as f32, point.1 as f32));
+                (-point.0 as f32 / magnitude, -point.1 as f32 / magnitude)
+            },
         }
     }
 
@@ -105,7 +109,7 @@ impl<'a> Simulation<'a> {
                             velocity: Vector2 { x: 0f32, y: -1.0 },
                         }),
                         MouseButton::Right => {
-                            for _i in 0..1000 {
+                            for _i in 0..1500 {
                                 self.particle_collection.add_particle(Particle {
                                     mass: 5,
                                     x: (x as f32 * rng.gen_range(0.6..1.4)) as i32,
