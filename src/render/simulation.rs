@@ -7,7 +7,6 @@ use sdl2::{event::Event, mouse::MouseButton};
 
 use rand::prelude::*;
 
-use crate::fields::inward_field;
 use crate::particle::particle::VectorField;
 use crate::{Particle, ParticleCollection, Vector2};
 
@@ -19,6 +18,7 @@ pub struct Simulation<'a> {
     background_color: Color,
     particle_collection: ParticleCollection,
     vector_field: VectorField,
+    bounded: bool,
 }
 
 impl<'a> Simulation<'a> {
@@ -28,6 +28,8 @@ impl<'a> Simulation<'a> {
         height: u32,
         framerate: u32,
         background_color: Color,
+        vector_field: VectorField,
+        bounded: bool,
     ) -> Self {
         Simulation {
             title,
@@ -36,7 +38,8 @@ impl<'a> Simulation<'a> {
             framerate,
             background_color,
             particle_collection: ParticleCollection::new(),
-            vector_field: inward_field,
+            vector_field,
+            bounded,
         }
     }
 
@@ -106,7 +109,7 @@ impl<'a> Simulation<'a> {
                             velocity: Vector2 { x: 0f32, y: -1.0 },
                         }),
                         MouseButton::Right => {
-                            for _i in 0..1500 {
+                            for _i in 0..3000 {
                                 self.particle_collection.add_particle(Particle {
                                     mass: 5,
                                     x: (x as f32 * rng.gen_range(0.6..1.4)) as i32,
@@ -131,7 +134,7 @@ impl<'a> Simulation<'a> {
 
             // Drawing logic
             for (key, particle) in self.particle_collection.particles.iter_mut() {
-                particle.update_position(self.vector_field, 2.0, window_size, true); // Apply the gradient before drawing
+                particle.update_position(self.vector_field, 2.0, window_size, self.bounded); // Apply the gradient before drawing
                 canvas.set_draw_color(particle.color);
                 if particle.x < (self.width as i32)
                     && particle.x > 0
