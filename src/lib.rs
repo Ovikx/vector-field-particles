@@ -1,3 +1,4 @@
+pub mod fields;
 pub mod particle;
 pub mod render;
 pub mod utils;

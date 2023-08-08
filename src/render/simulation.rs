@@ -7,8 +7,8 @@ use sdl2::{event::Event, mouse::MouseButton};
 
 use rand::prelude::*;
 
+use crate::fields::inward_field;
 use crate::particle::particle::VectorField;
-use crate::utils::magnitude;
 use crate::{Particle, ParticleCollection, Vector2};
 
 pub struct Simulation<'a> {
@@ -36,10 +36,7 @@ impl<'a> Simulation<'a> {
             framerate,
             background_color,
             particle_collection: ParticleCollection::new(),
-            vector_field: |point: (i32, i32)| -> (f32, f32) {
-                let magnitude = magnitude((point.0 as f32, point.1 as f32));
-                (-point.0 as f32 / magnitude, -point.1 as f32 / magnitude)
-            },
+            vector_field: inward_field,
         }
     }
 

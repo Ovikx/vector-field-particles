@@ -11,7 +11,7 @@ pub struct Particle {
     pub velocity: Vector2,
 }
 
-pub type VectorField = fn(point: (i32, i32)) -> (f32, f32);
+pub type VectorField = fn(point: (i32, i32), window_size: (u32, u32)) -> (f32, f32);
 
 fn is_bounded(pos_x: i32, pos_y: i32, window_x: u32, window_y: u32) -> bool {
     pos_x > 0 && pos_x < window_x as i32 && pos_y > 0 && pos_y < window_y as i32
@@ -39,13 +39,13 @@ impl Particle {
         let force: (f32, f32) = match bounded {
             true => {
                 if is_bounded(self.x, self.y, window_size.0, window_size.1) {
-                    field((shifted_x, shifted_y))
+                    field((shifted_x, shifted_y), window_size)
                 } else {
                     let magnitude = ((shifted_x.pow(2) + shifted_y.pow(2)) as f32).sqrt();
                     (-shifted_x as f32 / magnitude, -shifted_y as f32 / magnitude)
                 }
             }
-            false => field((shifted_x, shifted_y)),
+            false => field((shifted_x, shifted_y), window_size),
         };
 
         self.velocity.x += force.0 / self.mass as f32 * factor;
