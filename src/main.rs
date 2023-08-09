@@ -6,12 +6,12 @@ use vecfield_particle_sim::{fields::*, render::simulation::Simulation};
 pub fn main() {
     let mut simulation = Simulation::new(
         "vecfield-particle-sim",
-        800,
-        600,
+        1280,
+        720,
         60,
         Color::BLACK,
-        vline_convergent,
-        false,
+        y_convergent,
+        true,
     );
     simulation.start();
 }
