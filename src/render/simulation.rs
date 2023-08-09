@@ -109,7 +109,7 @@ impl<'a> Simulation<'a> {
                             velocity: Vector2 { x: 0f32, y: -1.0 },
                         }),
                         MouseButton::Right => {
-                            for _i in 0..3000 {
+                            for _i in 0..5000 {
                                 self.particle_collection.add_particle(Particle {
                                     mass: 5,
                                     x: (x as f32 * rng.gen_range(0.6..1.4)) as i32,
@@ -129,11 +129,8 @@ impl<'a> Simulation<'a> {
             canvas.set_draw_color(self.background_color);
             canvas.clear();
 
-            // Removal storage
-            let mut to_remove: Vec<&u32> = vec![];
-
             // Drawing logic
-            for (key, particle) in self.particle_collection.particles.iter_mut() {
+            for particle in self.particle_collection.particles.iter_mut() {
                 particle.update_position(self.vector_field, 2.0, window_size, self.bounded); // Apply the gradient before drawing
                 canvas.set_draw_color(particle.color);
                 if particle.x < (self.width as i32)
@@ -149,8 +146,6 @@ impl<'a> Simulation<'a> {
                             particle.size,
                         ))
                         .unwrap();
-                } else {
-                    to_remove.push(key);
                 }
             }
 
